@@ -1,0 +1,1 @@
+revAdj in Graph class is changed to public

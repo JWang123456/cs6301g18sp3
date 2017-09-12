@@ -1,14 +1,11 @@
-package cs6301.g18.sp3;
-
 /**
  * Class to represent a graph
  *  @author rbk
  *  Ver 1.1: 2017/08/28.  Updated some methods to public.  Added getName() to Vertex
- *  Ver 1.2: 2017/09/08.  Added getVertex() method for GraphAlgorithm.java
  *
  */
 
-import cs6301.g00.ArrayIterator;
+package cs6301.g00;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +23,8 @@ public class Graph implements Iterable<Graph.Vertex> {
 
     public static class Vertex implements Iterable<Edge> {
 	int name; // name of the vertex
-	List<Edge> adj, revAdj; // adjacency list; use LinkedList or ArrayList
+	List<Edge> adj; // adjacency list; use LinkedList or ArrayList
+	public List<Edge> revAdj;
 
 	/**
 	 * Constructor for the vertex
@@ -49,11 +47,6 @@ public class Graph implements Iterable<Graph.Vertex> {
 	}
 
 	public Iterator<Edge> iterator() { return adj.iterator(); }
-
-	// Helper function for parallel arrays used to store vertex attributes
-	public static<T> T getVertex(T[] node, Vertex u) {
-	    return node[u.name];
-	}
 
 	/**
 	 * Method to get vertex number.  +1 is needed because [0] is vertex 1.
@@ -86,7 +79,7 @@ public class Graph implements Iterable<Graph.Vertex> {
 	    from = u;
 	    to = v;
 	    weight = w;
-	}	
+	}
 
 	/**
 	 * Method to find the other end end of an edge, given a vertex reference
@@ -97,15 +90,15 @@ public class Graph implements Iterable<Graph.Vertex> {
 	 * @return
 	              : Vertex - other end of edge
 	*/
-		public Vertex otherEnd(Vertex u) {
-		    assert from == u || to == u;
-		    // if the vertex u is the head of the arc, then return the tail else return the head
-		    if (from == u) {
-			return to;
-		    } else {
-			return from;
-		    } 
-		}
+	public Vertex otherEnd(Vertex u) {
+	    assert from == u || to == u;
+	    // if the vertex u is the head of the arc, then return the tail else return the head
+	    if (from == u) {
+		return to;
+	    } else {
+		return from;
+	    } 
+	}
 
 	/**
 	 * Return the string "(x,y)", where edge goes from x to y
@@ -195,7 +188,7 @@ public class Graph implements Iterable<Graph.Vertex> {
 	Graph g = new Graph(n);
 	g.directed = directed;
 	for (int i = 0; i < m; i++) {
-	    int u = in.nextInt(); 
+	    int u = in.nextInt();
 	    int v = in.nextInt();
 	    int w = in.nextInt();
 	    g.addEdge(g.getVertex(u), g.getVertex(v), w);
