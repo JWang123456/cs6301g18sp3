@@ -3,7 +3,9 @@ package cs6301.g18;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import cs6301.g00.Graph;
 import cs6301.g00.Graph.Edge;
@@ -12,70 +14,71 @@ import cs6301.g00.Graph.Vertex;
 public class TopologicalOrdering {
 	/** Algorithm 1. Remove vertices with no incoming edges, one at a
 	    *  time, along with their incident edges, and add them to a list.
+	 * @throws Exception 
 	    */
-	List<Graph.Vertex> toplogicalOrder1(Graph g) {
-		List<Graph.Vertex> res = new ArrayList<>();
-		HashMap<Vertex, Boolean> visitedV = new HashMap<>();
-		HashMap<Edge, Boolean> visitedE = new HashMap<>();
-		Iterator<Vertex> itr = g.iterator();
-		while(true) {
-			//If all vertexes have been visited, break and return result
-			int count = 0;
-			for(int i = 0; i < g.size() - 1; i++) {
-				if(visitedV.containsKey(g.getVertex(i + 1)) && visitedV.get(g.getVertex(i + 1))) {
-					count++;
-				}
-			}
-			if(count == g.size() - 1) break;
-			
-			//If not all vertexes have been visited and iterator is at end, go back to beginning
-			if(!itr.hasNext()) itr = g.iterator();
-			
-			//Visited each vertex with no incoming edges, mark outgoing edges to true (delete) 
-			Vertex v = itr.next();
-			if(!visitedV.containsKey(v) || visitedV.get(v) == false) {
-				//if one incoming edge is not deleted(marked true), flag is true, continue
-				boolean flag = false;
-				for(Edge ed: v.revAdj) {
-					if(!(visitedE.containsKey(ed) && visitedE.get(ed) == true)) {
-						flag = true;
-					}
-				}
-				//If all incoming edges have been deleted(flag is false) or no incoming edges, add vertex to result, delete outgoing edges(mark true)
-				if(v.revAdj.size() == 0 || !flag) {
-					res.add(v);
-					visitedV.put(v, true);
-					Iterator<Edge> itrE = v.iterator();
-					while(itrE.hasNext()) {
-						Edge e = itrE.next();
-						if(!visitedE.containsKey(e) || visitedE.get(e) == false) {
-							visitedE.put(e, true);
-						}
-					}
-				}
+	List<Graph.Vertex> toplogicalOrder1(Graph g) throws Exception {
+		int topNum = 0;
+		Queue<Vertex> q = new LinkedList<>();
+		List<Vertex> topList = new ArrayList<>();
+		for(Vertex ver: g.v) {
+			ver.inDegree = ver.revAdj.size();
+			if(ver.inDegree == 0) q.add(ver);
+		}
+		while(!q.isEmpty()) {
+			Vertex u = q.remove();
+			u.top = topNum++;
+			topList.add(u);
+			for(Edge e: u.adj) {
+				e.otherEnd(u).inDegree--;
+				if(e.otherEnd(u).inDegree == 0) q.add(e.otherEnd(u));
 			}
 		}
-		return res; 
+		if(topNum != g.size()) {
+			throw new Exception();
+		}
+		return topList;
 	}
 
 	   /** Algorithm 2. Run DFS on g and add nodes to the front of the output list,
 	    *  in the order in which they finish.  Try to write code without using global variables.
 	    */
 	List<Graph.Vertex> toplogicalOrder2(Graph g) {
-		List<Graph.Vertex> res = new ArrayList<>();
-		Iterator<Vertex> itr = g.iterator();
-		HashMap<Vertex, Boolean> visited = new HashMap<>();
-		while(itr.hasNext()) {
-			dfs(g, itr.next(), res, visited);
-			System.out.println(res.toString());
-		}
-		return res;
+		Iterator it = g.iterator();
+		List<Vertex> decFinList = new LinkedList<>();
+		DFS(g, it, decFinList);
+		return decFinList;
 	}
 	
-	void dfs(Graph g, Vertex v, List<Graph.Vertex> res, HashMap<Vertex, Boolean> visited) {
-		if(visited.containsKey(v) && visited.get(v) == true) {
-			return;
+	void DFS(Graph g, Iterator<Vertex> it, List<Vertex> decFinList) {
+		int topNum = g.size();
+		int time = 0;
+		int cno = 0;
+		for(Vertex ver: g.v) {
+			ver.seen = false;
 		}
+		while(it.hasNext()) {
+			Vertex u = it.next();
+			if(!u.seen) {
+				cno++;
+				DFSVisit(g, u, time, cno, topNum, decFinList);
+			}
+		}
+	}
+	
+	void DFSVisit(Graph g, Vertex u, int time, int cno, int topNum, List<Vertex> decFinList) {
+		u.seen = true;
+		u.dis = ++time;
+		u.cno = cno;
+		for(Edge e: u.adj) {
+			if(!e.otherEnd(u).seen) {
+				e.otherEnd(u).parent = u;
+				DFSVisit(g, e.otherEnd(u), time, cno, topNum, decFinList);
+			}
+		}
+		u.fin = ++time;
+		u.top = topNum--;
+		decFinList.add(u);
+		/*
 		Iterator<Edge> itrE = v.iterator();
 		Edge temp = null;
 		while(itrE.hasNext()) {
@@ -86,5 +89,6 @@ public class TopologicalOrdering {
 				res.add(temp.otherEnd(v));
 			}
 		}
+		*/
 	}
 }

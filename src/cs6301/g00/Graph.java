@@ -11,10 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import cs6301.g00.Graph.Vertex;
+
 public class Graph implements Iterable<Graph.Vertex> {
-    Vertex[] v; // vertices of graph
+    public Vertex[] v; // vertices of graph
     int n; // number of verices in the graph
-    boolean directed;  // true if graph is directed, false otherwise
+    public boolean directed;  // true if graph is directed, false otherwise
     
 
     /**
@@ -23,8 +25,15 @@ public class Graph implements Iterable<Graph.Vertex> {
 
     public static class Vertex implements Iterable<Edge> {
 	int name; // name of the vertex
-	List<Edge> adj; // adjacency list; use LinkedList or ArrayList
+	public List<Edge> adj; // adjacency list; use LinkedList or ArrayList
 	public List<Edge> revAdj;
+	public int inDegree;
+	public int top;
+	public boolean seen;
+	public int dis;
+	public int cno;
+	public Vertex parent;
+	public int fin;
 
 	/**
 	 * Constructor for the vertex
@@ -75,7 +84,7 @@ public class Graph implements Iterable<Graph.Vertex> {
 	 * @param w
 	 *            : int - Weight of edge
 	 */
-	Edge(Vertex u, Vertex v, int w) {
+	public Edge(Vertex u, Vertex v, int w) {
 	    from = u;
 	    to = v;
 	    weight = w;
