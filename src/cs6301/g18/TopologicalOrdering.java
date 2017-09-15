@@ -78,17 +78,5 @@ public class TopologicalOrdering {
 		u.fin = ++time;
 		u.top = topNum--;
 		decFinList.add(u);
-		/*
-		Iterator<Edge> itrE = v.iterator();
-		Edge temp = null;
-		while(itrE.hasNext()) {
-			temp = itrE.next();
-			if(!visited.containsKey(temp.otherEnd(v)) || visited.get(temp.otherEnd(v)) == false) {
-				dfs(g, temp.otherEnd(v), res, visited);
-				visited.put(temp.otherEnd(v), true);
-				res.add(temp.otherEnd(v));
-			}
-		}
-		*/
 	}
 }

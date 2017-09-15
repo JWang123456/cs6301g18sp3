@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import cs6301.g00.Graph.Edge;
 import cs6301.g00.Graph.Vertex;
 
 public class Graph implements Iterable<Graph.Vertex> {
@@ -166,6 +167,17 @@ public class Graph implements Iterable<Graph.Vertex> {
 	    to.adj.add(e);
 	}
     }
+    
+    public void addrevEdge(Vertex from, Vertex to, int weight) {
+		Edge e = new Edge(from, to, weight);
+		if(this.directed) {
+		    to.adj.add(e);
+	        from.revAdj.add(e);
+		} else {
+		    to.adj.add(e);
+		    from.adj.add(e);
+		}
+	}
 
     public int size() {
 	return n;
@@ -182,6 +194,10 @@ public class Graph implements Iterable<Graph.Vertex> {
     public static Graph readDirectedGraph(Scanner in) {
 	return readGraph(in, true);
     }
+    
+    public static Graph readrevDirectedGraph(Scanner in) {
+    	return readrevGraph(in, true);
+        }
     
     // read an undirected graph using the Scanner interface
     public static Graph readGraph(Scanner in) {
@@ -204,5 +220,22 @@ public class Graph implements Iterable<Graph.Vertex> {
 	}
 	return g;
     }
+    
+    public static Graph readrevGraph(Scanner in, boolean directed) {
+    	// read the graph related parameters
+    	int n = in.nextInt(); // number of vertices in the graph
+    	int m = in.nextInt(); // number of edges in the graph
+
+    	// create a graph instance
+    	Graph g = new Graph(n);
+    	g.directed = directed;
+    	for (int i = 0; i < m; i++) {
+    	    int u = in.nextInt();
+    	    int v = in.nextInt();
+    	    int w = in.nextInt();
+    	    g.addrevEdge(g.getVertex(u), g.getVertex(v), w);
+    	}
+    	return g;
+        }
 
 }
